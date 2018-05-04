@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Webcam from 'react-webcam';
+import services from './services';
 
 
 class WebcamCapture extends React.Component {
