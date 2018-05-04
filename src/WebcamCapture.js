@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Webcam from 'react-webcam';
 import services from './services';
 
-
 class WebcamCapture extends React.Component {
   constructor(props) {
     super(props)
@@ -10,7 +9,8 @@ class WebcamCapture extends React.Component {
     this.state = {
       images: [],
       interval: null,
-      num: 0
+      num: 0,
+      imageData: []
     }
   }
 
@@ -21,7 +21,15 @@ class WebcamCapture extends React.Component {
     this.setState({ interval })
   }
 
-  startPictures = () => {
+  verify(imageSrc) {
+    services.verify(imageSrc, '').then((res) => {
+      this.setState({
+        imageData: this.state.imageData.concat(res)
+      })
+    })
+  }
+
+  checkForWebcamPics = () => {
     if (!this.webcam) {
       return;
     }
@@ -29,11 +37,16 @@ class WebcamCapture extends React.Component {
       clearInterval(this.state.interval)
       return;
     }
+  }
+
+  startPictures = () => {
+    this.checkForWebcamPics()
     const imageSrc = this.webcam.getScreenshot();
     this.setState({
       images: this.state.images.concat(imageSrc),
       num: this.state.num + 1
      })
+     this.verify(imageSrc)
   }
 
   setRef = webcam => {
@@ -44,6 +57,7 @@ class WebcamCapture extends React.Component {
     return (
       <div>
         <Webcam
+          className={'webcamContainer'}
           audio={false}
           height={350}
           ref={this.setRef}
